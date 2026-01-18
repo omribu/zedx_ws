@@ -10,6 +10,8 @@ from rclpy.serialization import deserialize_message
 from rosidl_runtime_py.utilities import get_message
 import sqlite3
 
+BAG_PATH = "/home/volcani/zedx_ws/zed_odom_recordings/15_01_2026/1.0m_s/"
+NAME = "zed_odom_20260116_143029"
 
 class OdometryAnalyzer(Node):
     def __init__(self):
@@ -95,7 +97,6 @@ class OdometryAnalyzer(Node):
         except Exception as e:
             self.get_logger().error(f"Error reading bag: {str(e)}")
             return False
-
 
     def set_ground_truth_straight_line(self, start_point, end_point):
         """Set ground truth as a straight line"""
@@ -193,7 +194,6 @@ class OdometryAnalyzer(Node):
         
         return results
 
-
     def plot_trajectory(self, save_path=None):
         """Plot the trajectory with ground truth"""
         if len(self.x_positions) == 0:
@@ -243,7 +243,7 @@ class OdometryAnalyzer(Node):
         # Plot 3: Error distribution
         ax3 = axes[1, 0]
         if error_results:
-            ax3.hist(error_results['errors'], bins=30, color='blue', alpha=0.7, edgecolor='black')
+            ax3.hist(error_results['errors'], bins=60, color='blue', alpha=0.7, edgecolor='black')
             ax3.axvline(error_results['mean_error'], color='r', linestyle='--', 
                        linewidth=2, label=f'Mean: {error_results["mean_error"]:.3f} m')
             ax3.axvline(error_results['mean_error'] + error_results['std_error'], 
@@ -262,29 +262,23 @@ class OdometryAnalyzer(Node):
         ax4.axis('off')
         
         if error_results:
-            stats_text = f"""
-            TRAJECTORY STATISTICS
-            ═══════════════════════════════
+            stats_text = f"""    TRAJECTORY STATISTICS
+═══════════════════════════════
+    Duration:          {self.timestamps[-1] - self.timestamps[0]:.2f}  s
+    Distance Traveled: {self._calculate_path_length():.3f} m
+
+    ERROR METRICS
+═══════════════════════════════
+    Mean Error:       {error_results['mean_error']:.4f} m
+    Std Deviation:    {error_results['std_error']:.4f} m
+    Max Error:        {error_results['max_error']:.4f} m
+    RMSE:             {error_results['rmse']:.4f} m
+        """
             
-            Total Points:     {len(self.x_positions)}
-            Duration:         {self.timestamps[-1] - self.timestamps[0]:.2f} s
-            
-            Distance Traveled: {self._calculate_path_length():.3f} m
-            
-            ERROR METRICS
-            ═══════════════════════════════
-            Mean Error:       {error_results['mean_error']:.4f} m
-            Std Deviation:    {error_results['std_error']:.4f} m
-            Max Error:        {error_results['max_error']:.4f} m
-            RMSE:            {error_results['rmse']:.4f} m
-            
-            Ground Truth Type: {self.ground_truth_type.replace('_', ' ').title()}
-            """
-            
-            ax4.text(0.1, 0.5, stats_text, fontsize=11, family='monospace',
-                    verticalalignment='center', bbox=dict(boxstyle='round', 
-                    facecolor='wheat', alpha=0.3))
-        
+            ax4.text(0.3, 0.5, stats_text, fontsize=12, family='monospace',
+                    verticalalignment='center', horizontalalignment='left', 
+                    bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.6))
+                
         plt.tight_layout()
         
         if save_path:
@@ -292,7 +286,6 @@ class OdometryAnalyzer(Node):
             self.get_logger().info(f"Plot saved to: {save_path}")
         
         plt.show()
-
 
     def _calculate_path_length(self):
         """Calculate total path length"""
@@ -303,7 +296,6 @@ class OdometryAnalyzer(Node):
         diffs = np.diff(points, axis=0)
         distances = np.linalg.norm(diffs, axis=1)
         return np.sum(distances)
-
 
     def print_statistics(self):
         """Print detailed statistics"""
@@ -331,8 +323,9 @@ def main(args=None):
     rclpy.init(args=args)
     analyzer = Node('temp_node')
     
-    # Odometry bag from recording ZEDx camera
-    bag_path = "/home/volcani/zedx_ws/zed_odom_recordings/zed_odom_0.5zigzag"
+    # Odometry bag from recording ZEDx camerazed_odom_10m_1
+
+    bag_path = BAG_PATH + NAME + "/"
     
     odom_analyzer = OdometryAnalyzer()
     
@@ -340,7 +333,7 @@ def main(args=None):
     # Straight line 
     odom_analyzer.set_ground_truth_straight_line(
         start_point=[0.0, 0.0],
-        end_point=[10.0, 0.0]
+        end_point=[5.0, 0.0]
     )
     
     # Custom waypoints 
@@ -359,7 +352,7 @@ def main(args=None):
         odom_analyzer.print_statistics()
         
         # Plot results
-        save_path = os.path.join(os.path.dirname(bag_path), "trajectory_analysis.png")
+        save_path = os.path.join(os.path.dirname(bag_path), NAME + ".png")
         odom_analyzer.plot_trajectory(save_path=save_path)
     
     analyzer.destroy_node()

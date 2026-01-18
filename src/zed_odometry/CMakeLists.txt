@@ -24,7 +24,9 @@ find_package(OpenCV REQUIRED)
 ament_python_install_package(${PROJECT_NAME})
 
 install(PROGRAMS
-  ${PROJECT_NAME}/record_zed_odom.py
+  ${PROJECT_NAME}/record_odometry.py
+  ${PROJECT_NAME}/capture_images.py
+  ${PROJECT_NAME}/analyzer.py
   # ${PROJECT_NAME}/odometry_analyzer.py
   DESTINATION lib/${PROJECT_NAME}
 )
