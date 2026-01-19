@@ -23,9 +23,9 @@ import sqlite3
 
 # REPLACE PATH AND NAME
 BAG_PATH = "/home/volcani/zedx_ws/zed_odom_recordings/15_01_2026/1.0m_s/"
-NAME = "zed_odom_20260118_152517"   
+NAME = "zed_odom_20260119_092836"   
 
-DISTANCE = 5.0  # meters  (add the position of the last position info to the x_stop, y_stop) (5.0, 0.0) for 5 meters forward
+DISTANCE = 2.0  # meters  (add the position of the last position info to the x_stop, y_stop) (5.0, 0.0) for 5 meters forward
 
 
 
@@ -81,6 +81,15 @@ class Analyzer:
         ])
 
         self.DistCoeffs = np.array([-0.05570114776492119, 0.07012512534856796, -5.900441828998737e-05, 0.0006998045719228685, -0.0226144976913929])
+
+        # MY CALIBRATION
+        # self.K_my = np.array([
+        #     [470.51290201, 0.0, 335.27920402],
+        #     [0.0, 476.33936417, 212.38990294],
+        #     [0.0, 0.0, 1.0]
+        # ])
+
+        # self.DistCoeffs_my = np.array([0.19677268, -0.40855946, -0.03181466, 0.0100384, 1.439907])
 
         self.H = H    # Camera height in meters
 
@@ -380,7 +389,7 @@ def main(args=None):
             odom_analyzer.K,
             odom_analyzer.H
         )
-        # ADD (X,Y) position to the last position
+        # ADD (X,Y) real position to the last position
         x_stop = x_stop + DISTANCE
         print(f"Stop world coordinates: x={x_stop:.4f} m, y={y_stop:.4f} m")
 
