@@ -8,24 +8,21 @@ from rclpy.node import Node
 from std_srvs.srv import Trigger
 from sensor_msgs.msg import Image
 from nav_msgs.msg import Odometry
-import cv2
-from cv_bridge import CvBridge
+
 
 class ZedOdomRecorder(Node):
     def __init__(self):
         super().__init__('record_odometry')
 
         
-        self.declare_parameter('path_to_save', '/home/volcani/zedx_ws/zed_odom_recordings/15_01_2026/1.5m_s/')
+        self.declare_parameter('path_to_save', '/home/volcani/zedx_ws/zed_odom_recordings/15_02_2026/')
         self.save_recording = self.get_parameter('path_to_save').get_parameter_value().string_value
 
-        # self.save_recording = "/home/volcani/zedx_ws/zed_odom_recordings/15_01_2026/1.5m_s/"
-        self.bridge = CvBridge()
-        
+
        
         # Subscribe to zed odometry
         self.odom_sub = self.create_subscription(Odometry, '/zed/zed_node/odom', self.odom_callback, 10)
-
+        
 
         # Services to start/stop recording
         self.start_recording_srv = self.create_service(Trigger, 'start_recording', self.start_recording_callback)

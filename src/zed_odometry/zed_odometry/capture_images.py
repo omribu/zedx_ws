@@ -13,7 +13,7 @@ class CaptureImg(Node):
     def __init__(self):
         super().__init__('capture_images')
 
-        self.declare_parameter('path_to_save', '/home/volcani/zedx_ws/zed_odom_recordings/15_01_2026/')
+        self.declare_parameter('path_to_save', '/home/volcani/zedx_ws/zed_odom_recordings/15_02_2026/')
         self.save_images = self.get_parameter('path_to_save').get_parameter_value().string_value
 
         # os.makedirs(self.save_images, exist_ok=True)
@@ -48,6 +48,12 @@ class CaptureImg(Node):
     def image_callback(self, msg):
         # Store the latest image
         self.image = msg
+
+        cv_image = self.bridge.imgmsg_to_cv2(self.image, desired_encoding='bgr8')
+
+        cv2.imshow('RealSense Camera', cv_image)
+        cv2.waitKey(1)
+
 
     def start_capture_img_callback(self, request, response):
         if self.image is None:
@@ -96,7 +102,9 @@ def main(args=None):
     node = CaptureImg()
     rclpy.spin(node)
     node.destroy_node()
+    cv2.destroyAllWindows()
     rclpy.shutdown()
+    
 
 if __name__ == '__main__':
     main()

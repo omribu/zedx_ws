@@ -9,7 +9,7 @@ from ament_index_python.packages import get_package_share_directory
 
 
 #############  Change here to set path  #############
-PATH = "/home/volcani/zedx_ws/zed_odom_recordings/15_01_2026/1.0m_s/"
+PATH = "/home/volcani/zedx_ws/zed_odom_recordings/15_02_2026/"
 
 
 

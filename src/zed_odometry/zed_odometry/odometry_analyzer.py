@@ -10,8 +10,8 @@ from rclpy.serialization import deserialize_message
 from rosidl_runtime_py.utilities import get_message
 import sqlite3
 
-BAG_PATH = "/home/volcani/zedx_ws/zed_odom_recordings/15_01_2026/1.0m_s/"
-NAME = "zed_odom_20260116_143029"
+BAG_PATH = "/home/volcani/zedx_ws/zed_odom_recordings/15_2_2026/"
+NAME = "4_45deg_backwards"
 
 class OdometryAnalyzer(Node):
     def __init__(self):
