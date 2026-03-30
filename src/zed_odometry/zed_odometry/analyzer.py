@@ -21,16 +21,19 @@ import sqlite3
 # experiment.
 
 
-# REPLACE PATH AND NAME
-BAG_PATH = "/home/volcani/zedx_ws/zed_odom_recordings/25_02_2026/"
-NAME = "7_forward_cam_horizon"   
+# REPLACE PATH for specific experiment
+NAME = "4"
+EXP_TYPE = "1.0m_s"  
+DATE = "30_03_26_fk"
+BAG_PATH = "/home/volcani/zedx_ws/zed_odom_recordings/" + DATE + "/" + EXP_TYPE + "/" + NAME + "/"
 
 DISTANCE = 5.0  # meters  (add the position of the last position info to the x_stop, y_stop) (5.0, 0.0) for 5 meters forward
 
+H = 0.633 # Camera height in meters from ground (along Z axis)
 
+# CALIBRATE THIS IF THE REALSENSE CAMERA IS PHYICALY MOVED!!!
+PIXEL_QUERY = [600, 351]  
 
-H = 0.455 # Camera height in meters
-PIXEL_QUERY = [661, 183]
 
 class PixelValueExtractor:
 
@@ -158,8 +161,8 @@ class Analyzer:
 
     def extract_pixel_values(self):
 
-        start_path = BAG_PATH + NAME + "/start.png"
-        stop_path  = BAG_PATH + NAME + "/stop.png"
+        start_path = BAG_PATH + "/start.png"
+        stop_path  = BAG_PATH + "/stop.png"
 
         image_start = cv2.imread(start_path)
         image_stop  = cv2.imread(stop_path)
@@ -360,7 +363,7 @@ def main(args=None):
     rclpy.init(args=args)
     analyzer = Node('node')
 
-    bag_path = BAG_PATH + NAME + "/"
+    bag_path = BAG_PATH
     
     odom_analyzer = Analyzer()
 

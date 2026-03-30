@@ -8,8 +8,13 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 
+# ================================================== #
 #############  Change here to set path  #############
-PATH = "/home/volcani/zedx_ws/zed_odom_recordings/15_02_2026/"
+# ================================================== #
+EXP_TYPE = "1.0m_s"  
+DATE = "30_03_26_fk"
+PATH = "/home/volcani/zedx_ws/zed_odom_recordings/" + DATE + "/" + EXP_TYPE + "/" 
+
 
 
 
@@ -27,8 +32,32 @@ def generate_launch_description():
         ),
         launch_arguments={
             'camera_model': 'zedx',
+            'publish_imu_tf': 'true',
+            'ros_params_override_path': os.path.join(
+                get_package_share_directory('zed_odometry'),
+                'config',
+                'zedx_outdoor_vio.yaml'
+            ),
         }.items()
     )
+
+
+
+
+
+    # zed_x = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         PathJoinSubstitution([
+    #             FindPackageShare('zed_wrapper'),
+    #             'launch',
+    #             'zed_camera.launch.py',
+    #         ])
+    #     ),
+    #     launch_arguments={
+    #         'camera_model': 'zedx',
+    #         'pos_tracking_mode': 'GEN_2',
+    #     }.items()
+    # )
 
     # ---------------- RealSense ----------------
     realsense = IncludeLaunchDescription(

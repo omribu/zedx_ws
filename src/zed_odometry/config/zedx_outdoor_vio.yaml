@@ -1,0 +1,24 @@
+/**:
+    ros__parameters:
+
+        general:
+            pub_frame_rate: 30.0          # For better IMU integration
+
+        video:
+            auto_exposure_gain: true       # keep true for outdoor lighting
+            exposure: 50                   # lower ceiling to avoid blown frames
+
+        depth:
+            depth_mode: 'NEURAL'           # better than NEURAL_LIGHT for outdoors
+            depth_stabilization: 50        
+
+        pos_tracking:
+            pos_tracking_mode: 'GEN_2'     
+            imu_fusion: true               # Ensures VIO not just VO
+            set_gravity_as_origin: true    # aligns world to IMU gravity
+            area_memory: true             # loop closure helps long runs
+            depth_min_range: 0.5          # ignore too-close depth noise
+
+        sensors:
+            sensors_pub_rate: 200.0        # higher IMU rate = better fusion
+            publish_imu: true
