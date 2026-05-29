@@ -3,3 +3,10 @@ build/
 install/
 log/
 src/zed_odometry/rviz/
+# Large recordings and DB files
+zed_odom_recordings/
+.vscode/browse.vc.db
+
+# Specific files to ignore
+src/zed_odometry/launch/zed_record_odom.launch_V.py
+src/zed_odometry/zed_odometry/analyzer_V.py
