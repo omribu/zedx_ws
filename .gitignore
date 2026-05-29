@@ -24,3 +24,4 @@ src/zed_odometry/rviz/
 build/
 install/
 log/
+src/realsense-ros/
