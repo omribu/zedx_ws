@@ -13,7 +13,7 @@
             depth_stabilization: 50        
 
         pos_tracking:
-            pos_tracking_mode: 'GEN_2'     
+            pos_tracking_mode: 'GEN_3'     
             imu_fusion: true               # Ensures VIO not just VO
             set_gravity_as_origin: true    # aligns world to IMU gravity
             area_memory: true             # loop closure helps long runs

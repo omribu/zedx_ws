@@ -11,9 +11,9 @@ from ament_index_python.packages import get_package_share_directory
 # ================================================== #
 #############  Change here to set path  #############
 # ================================================== #
-EXP_TYPE = "1.0m_s"  
-DATE = "30_03_26_fk"
-PATH = "/home/volcani/zedx_ws/zed_odom_recordings/" + DATE + "/" + EXP_TYPE + "/" 
+EXP_TYPE = "0.5m_s" #"1.0m_s/with_features/"  
+DATE = "18_5_26_morning_midday"
+PATH = "/home/volcani/workspaces/zedx_ws/zed_odom_recordings/" + DATE + "/" + EXP_TYPE + "/"
 
 
 
@@ -42,22 +42,6 @@ def generate_launch_description():
     )
 
 
-
-
-
-    # zed_x = IncludeLaunchDescription(
-    #     PythonLaunchDescriptionSource(
-    #         PathJoinSubstitution([
-    #             FindPackageShare('zed_wrapper'),
-    #             'launch',
-    #             'zed_camera.launch.py',
-    #         ])
-    #     ),
-    #     launch_arguments={
-    #         'camera_model': 'zedx',
-    #         'pos_tracking_mode': 'GEN_2',
-    #     }.items()
-    # )
 
     # ---------------- RealSense ----------------
     realsense = IncludeLaunchDescription(
@@ -100,20 +84,28 @@ def generate_launch_description():
         parameters=[{'path_to_save': PATH}]
     )
 
+
+    # Delay recording nodes until ZED has had time to start publishing odom.
+    # Without this, on experiment 3+ the nodes spin up before odom is live.
+    
+    record_odom_delayed = TimerAction(
+        period=15.0,
+        actions=[record_odom, capture_images]
+    )
+
     # ---------------- Log Info ----------------
     cameras_ready_message = TimerAction(
-        period=13.0,  
+        period=18.0,  
         actions=[LogInfo(msg="✅ Both ZED and RealSense cameras are ready. You can start the experiment.")]
     )
 
 
     # ---------------- Launch ----------------
     return LaunchDescription([
-        zed_x,               # MUST start first
-        realsense_delayed,   # delayed start
-        record_odom,
-        capture_images,
-        cameras_ready_message,
+        zed_x,                  # t=0s
+        realsense_delayed,      # t=5s
+        record_odom_delayed,    # t=15s  ← this replaces the two individual entries
+        cameras_ready_message,  # t=18s
     ])
 
 
@@ -133,127 +125,3 @@ def generate_launch_description():
 
 
 
-
-
-
-
-
-
-# from launch import LaunchDescription
-# from launch_ros.actions import Node
-# from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, ExecuteProcess, TimerAction
-# from launch.launch_description_sources import PythonLaunchDescriptionSource
-# from launch_ros.substitutions import FindPackageShare
-# from launch.substitutions import PathJoinSubstitution
-# import os
-# from ament_index_python.packages import get_package_share_directory
-
-# PATH = "/home/volcani/zedx_ws/zed_odom_recordings/15_01_2026/1.0m_s/"
-
-
-
-# def generate_launch_description():
-
-#     realsense_delayed = TimerAction(
-#         period=3.0,  # even 3s is often enough
-#         actions=[realsense]
-#     )
-
-#     # zed_x = IncludeLaunchDescription(
-#     #     PythonLaunchDescriptionSource([
-#     #         PathJoinSubstitution([
-#     #             FindPackageShare('zed_wrapper'),
-#     #             'launch',
-#     #             'zed_camera.launch.py',
-#     #         ])
-#     #     ]),
-#     #             launch_arguments={'camera_model': 'zedx'}.items()
-#     # )
-
-#     zed_x = IncludeLaunchDescription(
-#     PythonLaunchDescriptionSource(
-#         PathJoinSubstitution([
-#             FindPackageShare('zed_wrapper'),
-#             'launch',
-#             'zed_camera.launch.py',
-#         ])
-#     ),
-#     launch_arguments={
-#         'camera_model': 'zedx',
-#     }.items()
-# )
-
-
-#     realsense = IncludeLaunchDescription(
-#         PythonLaunchDescriptionSource(
-#             PathJoinSubstitution([
-#                 FindPackageShare('realsense2_camera'),
-#                 'launch',
-#                 'rs_launch.py',
-#             ])
-#         ),
-#         launch_arguments={
-#             'enable_depth': 'false',
-#             'enable_color': 'true',
-#             'enable_gyro': 'false',
-#             'enable_accel': 'false',
-
-#             'enable_sync': 'false'
-#         }.items()
-#     )
-
-#     realsense_delayed = TimerAction(
-#         period=3.0,  # even 3s is often enough
-#         actions=[realsense]
-#     )
-
-
-
-#     zed_odom_recording = Node(
-#         package="zed_odometry",
-#         executable="record_zed_odom.py",
-#         name="record_zed_odometry",
-#         output="screen",
-#     )
-
-#     record_odom = Node(
-#         package="zed_odometry",
-#         executable="record_odometry.py",
-#         name="record_odometry",
-#         output="screen",
-#         parameters=[{'path_to_save': PATH}]
-#     )
-
-#     capture_images = Node(
-#         package="zed_odometry",
-#         executable="capture_images.py",
-#         name="capture_images",
-#         output="screen",
-#         parameters=[{'path_to_save': PATH}]
-#     )
-
-#     # keyboard_controller_node = Node(
-#     #     package="zed_odometry",
-#     #     executable="keyboard_controller.py",
-#     #     name="keyboard_controller",
-#     #     output="screen",
-#     # )
-
-#     rviz_node = Node(
-#         package="rviz2",
-#         executable="rviz2",
-#         name="rviz2",
-#         output="screen",
-#         arguments=["-d", os.path.join(get_package_share_directory("zed_odometry"), "rviz", "display.rviz")]
-#     )
-
-#     return LaunchDescription([
-#         zed_x, 
-#         realsense_delayed,
-#         # cleanup_zed                             # FOR expirement
-#         # zed_odom_recording,    ### when conecting a screen directly to jetson 
-#         record_odom,         ### when conecting remotely via ssh
-#         capture_images,
-#         # keyboard_controller_node,
-#         # rviz_node
-#     ])

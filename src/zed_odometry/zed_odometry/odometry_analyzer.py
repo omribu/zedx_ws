@@ -10,8 +10,8 @@ from rclpy.serialization import deserialize_message
 from rosidl_runtime_py.utilities import get_message
 import sqlite3
 
-BAG_PATH = "/home/volcani/zedx_ws/zed_odom_recordings/15_2_2026/"
-NAME = "4_45deg_backwards"
+BAG_PATH = "/home/volcani/workspaces/zedx_ws/zed_odom_recordings/7_5_26/"
+NAME = "1.0m_s/with_features/7"
 
 class OdometryAnalyzer(Node):
     def __init__(self):
@@ -280,12 +280,12 @@ class OdometryAnalyzer(Node):
                     bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.6))
                 
         plt.tight_layout()
-        
+
         if save_path:
             plt.savefig(save_path, dpi=300, bbox_inches='tight')
             self.get_logger().info(f"Plot saved to: {save_path}")
-        
-        plt.show()
+
+        plt.close()
 
     def _calculate_path_length(self):
         """Calculate total path length"""
