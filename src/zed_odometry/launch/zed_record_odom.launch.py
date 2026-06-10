@@ -11,8 +11,8 @@ from ament_index_python.packages import get_package_share_directory
 # ================================================== #
 #############  Change here to set path  #############
 # ================================================== #
-EXP_TYPE = "0.5m_s" #"1.0m_s/with_features/"  
-DATE = "18_5_26_morning_midday"
+EXP_TYPE = "" #"1.0m_s/with_features/"  
+DATE = "3_6_26"
 PATH = "/home/volcani/workspaces/zedx_ws/zed_odom_recordings/" + DATE + "/" + EXP_TYPE + "/"
 
 
